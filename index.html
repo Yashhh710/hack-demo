@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIOMETRIC ANALYZER MOD-v2.0</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>BURNOUT MONITORING SYSTEM // ALPHA-2</h1>
+            <div class="timestamp" id="current-time">12:36:30 // 20.0 °C</div>
+        </header>
+
+        <main class="dashboard-grid">
+            <!-- Left Column: Biometrics -->
+            <aside class="side-column">
+                <div class="hud-panel">
+                    <div class="panel-header">
+                        <span>SYSTEM METRICS</span>
+                        <span>[LVL_01]</span>
+                    </div>
+                    
+                    <div class="tech-stat-row">
+                        <div class="tech-stat-label">
+                            <span>SLEEP ANALYSIS</span>
+                            <span class="cyan-text" id="sleep-percent">8h</span>
+                        </div>
+                        <div class="tech-stat-value" id="stat-sleep-txt">08.00</div>
+                        <div class="hud-progress" id="sleep-progress">
+                            <!-- JS will inject segments -->
+                        </div>
+                    </div>
+
+                    <div class="tech-stat-row">
+                        <div class="tech-stat-label">
+                            <span>RECOVERY INDEX</span>
+                            <span class="emerald-text" id="energy-percent">70%</span>
+                        </div>
+                        <div class="tech-stat-value" id="stat-energy-txt">7.0/10</div>
+                        <div class="hud-progress" id="energy-progress"></div>
+                    </div>
+
+                    <div class="tech-stat-row">
+                        <div class="tech-stat-label">
+                            <span>MOOD STABILITY</span>
+                            <span class="amber-text" id="mood-label">STABLE</span>
+                        </div>
+                        <div class="tech-stat-value" id="stat-mood-txt">04.00</div>
+                        <div class="hud-progress" id="mood-progress"></div>
+                    </div>
+                </div>
+
+                <div class="hud-panel" style="height: 350px; display: flex; flex-direction: column;">
+                    <div class="panel-header">
+                        <span>NEURAL TRENDS</span>
+                    </div>
+                    <div style="flex: 1; position: relative;">
+                        <canvas id="burnoutChart"></canvas>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Center Column: Character & Score -->
+            <section class="center-column">
+                <div class="character-display" id="char-zone">
+                    <img id="mood-character" src="models/1.png" alt="Subject">
+                    <div class="scan-line"></div>
+                    <div class="character-base"></div>
+                    
+                    <!-- Data Points -->
+                    <div class="data-node" style="top: 20%; left: 45%;" data-label="NEURAL_CORE: ACTIVE"></div>
+                    <div class="data-node" style="top: 45%; left: 35%;" data-label="CARDIAC_RHYTHM: STABLE"></div>
+                    <div class="data-node" style="top: 70%; left: 52%;" data-label="METABOLIC_FLUX: NORMAL"></div>
+                    
+                    <div style="position: absolute; top: 20%; left: 0; width: 30%; height: 1px; background: var(--panel-border);"></div>
+                    <div style="position: absolute; top: 50%; right: 0; width: 25%; height: 1px; background: var(--panel-border);"></div>
+                </div>
+
+                <div class="big-score-container">
+                    <div class="status-label" id="status-txt">OPTIMAL</div>
+                    <div id="burnout-score">00.00</div>
+                    <div style="font-size: 0.75rem; color: var(--accent-cyan); letter-spacing: 2px;">BURNOUT PROBABILITY INDEX</div>
+                </div>
+            </section>
+
+            <!-- Right Column: Insights & Commands -->
+            <aside class="side-column">
+                <div class="hud-panel">
+                    <div class="panel-header">
+                        <span>DIAGNOSTIC INSIGHTS</span>
+                        <span>ID: RP-96573</span>
+                    </div>
+                    <ul id="insights-list" style="list-style: none; font-size: 0.7rem; line-height: 1.8;">
+                        <!-- JS injected -->
+                    </ul>
+                </div>
+
+                <div class="hud-panel">
+                    <div class="panel-header">
+                        <span>OPERATIONAL SUGGESTIONS</span>
+                    </div>
+                    <div id="suggestions-list" style="font-size: 0.7rem; line-height: 1.6;">
+                        <!-- JS injected -->
+                    </div>
+                </div>
+
+                <div class="hud-panel hud-form">
+                    <div class="panel-header">
+                        <span>DATA INPUT INTERFACE</span>
+                    </div>
+                    <form id="checkin-form">
+                        <div class="tech-stat-row">
+                            <div class="tech-stat-label">MOOD SELECT [1-5]</div>
+                            <div style="display: flex; gap: 5px;">
+                                <button type="button" class="hud-btn emoji-btn" data-mood="1" style="margin-top:0; padding: 5px;">1</button>
+                                <button type="button" class="hud-btn emoji-btn" data-mood="2" style="margin-top:0; padding: 5px;">2</button>
+                                <button type="button" class="hud-btn emoji-btn" data-mood="3" style="margin-top:0; padding: 5px;">3</button>
+                                <button type="button" class="hud-btn emoji-btn" data-mood="4" style="margin-top:0; padding: 5px;">4</button>
+                                <button type="button" class="hud-btn emoji-btn" data-mood="5" style="margin-top:0; padding: 5px;">5</button>
+                            </div>
+                        </div>
+                        <div class="tech-stat-row">
+                            <div class="tech-stat-label">SLEEP (HRS): <span id="sleep-val">8</span></div>
+                            <input type="range" id="sleep-range" min="0" max="15" step="0.5" value="8" style="width: 100%;">
+                        </div>
+                        <div class="tech-stat-row">
+                            <div class="tech-stat-label">ENERGY [0-10]: <span id="energy-val">7</span></div>
+                            <input type="range" id="energy-range" min="1" max="10" value="7" style="width: 100%;">
+                        </div>
+                        <button type="submit" class="hud-btn" id="submit-checkin">EXECUTE LOG_PROCEDURE</button>
+                    </form>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
